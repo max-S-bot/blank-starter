@@ -1,22 +1,40 @@
 <!-- preview by entering 'python -m http.server' (no quotes) as a terminal command -->
+<!-- <button id="store">Store Object and print string representation</button> <br><br> -->
+
 
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Empty Starter</title>
+    <title>CRUD stuff</title>
+    
+    <script src="data.js"></script>
     <link href="styles.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
 
-    <button id="store">Store Object and print string representation</button> <br><br>
-    <button id="get">Print Object from localStorage with JSON.parse</button> <br><br>
-    <input type="text" id="key" value="key"> <br><br>
-    <button id="alterKey">Add or change a key</button><br><br>
-    <button id="deleteKey">Delete key</button> <br> <br>
+    <select id="key">
+      <option>Choose a key</option>
+      <option value="email">Email</option>
+      <option value="name">Name</option>
+      <option value="age">Age</option>
+      <option value="department">Department</option>
+    </select><br><br>
+    <select id="num">
+      <option>Choose an object</option>
+    </select><br><br>
     <input type="text" id="val" value="new value"> <br><br>
+    <button id="b">Change Key</button><br><br>
+
+    <table id="table">
+      <tr>
+        <th>Number</th>
+        <th>Email</th>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Department</th>
+      </tr>
+    </table>
     
-    <div>Object as string in localStorage: </div>
-    <div id="output"></div> <br>
 
     <script src="script.js"></script>
 

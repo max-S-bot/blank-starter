@@ -1,143 +1,77 @@
-document.getElementById("store").addEventListener("click",objToLocal);
-document.getElementById("get").addEventListener("click",objFromLocal);
-document.getElementById("deleteKey").addEventListener("click",deleteKey);
-document.getElementById("alterKey").addEventListener("click",alterKey);
+window.addEventListener('load', init);
+document.getElementById("b").addEventListener("click",alterObj);
+const table = document.getElementById("table");
+const numDropDown = document.getElementById("num");
 
-const out = document.getElementById("output");
 
-const object = {
-  metadata: {
-    version: "1.0",
-    timestamp: "2025-08-15T11:30:00Z",
-    source: "ExampleDataGenerator",
-    recordCount: 100000,
-  },
-  users: [
-    // Array of user objects
-    {
-      id: "user_00001",
-      username: "john_doe",
-      email: "john.doe@example.com",
-      profile: {
-        firstName: "John",
-        lastName: "Doe",
-        age: 30,
-        address: {
-          street: "123 Main St",
-          city: "Anytown",
-          zip: "12345",
-          country: "USA",
-        },
-        preferences: {
-          theme: "dark",
-          notifications: {
-            email: true,
-            sms: false,
-          },
-        },
-      },
-      orders: [
-        // Array of order objects
-        {
-          orderId: "ORD_00001",
-          date: "2024-01-15",
-          total: 150.75,
-          items: [
-            { productId: "PROD_001", quantity: 1, price: 75.25 },
-            { productId: "PROD_002", quantity: 2, price: 37.75 },
-          ],
-        },
-        // ... more order objects
-      ],
-      activityLog: [
-        // Array of activity log entries
-        { type: "login", timestamp: "2024-01-15T09:00:00Z" },
-        { type: "purchase", timestamp: "2024-01-15T10:30:00Z", orderId: "ORD_00001" },
-        // ... more activity log entries
-      ],
-    },
-    // ... thousands more user objects following a similar structure
-    {
-      id: "user_100000",
-      username: "jane_smith",
-      email: "jane.smith@example.com",
-      profile: {
-        firstName: "Jane",
-        lastName: "Smith",
-        age: 25,
-        address: {
-          street: "456 Oak Ave",
-          city: "Otherville",
-          zip: "67890",
-          country: "USA",
-        },
-        preferences: {
-          theme: "light",
-          notifications: {
-            email: false,
-            sms: true,
-          },
-        },
-      },
-      orders: [], // Might be empty
-      activityLog: [], // Might be empty
-    },
-  ],
-  products: {
-    // Object mapping product IDs to product details
-    PROD_001: {
-      name: "Laptop Pro",
-      category: "Electronics",
-      price: 75.25,
-      description: "High-performance laptop.",
-    },
-    PROD_002: {
-      name: "Wireless Mouse",
-      category: "Accessories",
-      price: 37.75,
-      description: "Ergonomic wireless mouse.",
-    },
-    // ... thousands more product objects
-  },
-  settings: {
-    globalConfig: {
-      currency: "USD",
-      language: "en-US",
-    },
-    featureFlags: {
-      newDashboard: true,
-      betaTesting: false,
-    },
-  },
-};
 
-function objToLocal(e,obj=object) {
-  const s = JSON.stringify(obj);
-  console.log(s);
-  localStorage.setItem("obj",s);
-  out.innerHTML = s;
+//store employees array in localStorage
+//each employee has its own id in local
+function init() {
+  for (let employee of employees) {
+    addRow(employee);
+    objToLocal(employee);
+    const op = document.createElement("option");
+    op.value = employee.num;
+    op.textContent = employee.num;
+    numDropDown.appendChild(op);
+  }
 }
 
-function objFromLocal() {
-  const s  = localStorage.getItem("obj");
+// store an object in localStorage
+function objToLocal(obj) {
+  const s = JSON.stringify(obj);
+  localStorage.setItem(obj.num,s);
+}
+
+// retrieve object with index/num
+// property "i" from localStorage
+function objFromLocal(i) {
+  const s  = localStorage.getItem(i);
   const obj = JSON.parse(s);
-  console.log(obj);
   return obj;
 }
 
-function alterKey() {
-  const k = document.getElementById("key").value;
-  const v = document.getElementById("val").value;
-  let obj = objFromLocal();
-  obj[k] = v;
-  objToLocal(null,obj);
+//alter obj selected in html
+function alterObj() {
+  const i = document.getElementById("num").value;
+  const key = document.getElementById("key").value;
+  const val = document.getElementById("val").value;
+  const obj = objFromLocal(i);
+  obj[key] = val;
+  objToLocal(obj);
+  const cell = document.getElementById(key+i);
+  cell.textContent = val;
 }
- 
-function deleteKey() {
-  const k = document.getElementById("key").value;
-  console.log("key:"+k)
-  let obj = objFromLocal();
-  delete obj[k];
-  objToLocal(null,obj);
+
+//adds a row with each of
+//obj's properties to the table
+function addRow(obj) {
+  const row = document.createElement("tr");
+  row.id = obj.num;
+  for (key in obj) {
+    const cell = document.createElement("td");
+    cell.id = key+obj.num;
+    cell.textContent = obj[key];
+    row.appendChild(cell);
+  }
+  table.appendChild(row);
 }
+
+//deletes an object from the table
+
+//should it have this feature?
+//should it have an addNewRow
+//feature as well?
+
+/*
+if deleteRow is added
+then the indices (num property)
+need to be adjusted for all employees
+in both localStorage and the table
+*/
+function deleteRow() {
+
+}
+
 
