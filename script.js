@@ -1,24 +1,35 @@
 window.addEventListener('load', init);
-document.getElementById("b").addEventListener("click",alterObj);
 const table = document.getElementById("table");
-const numDropDown = document.getElementById("num");
-
+const dontStr = "dont_reinitialize_everything";
 
 
 //store employees array in localStorage
 //each employee has its own id in local
+//(this is a number)
 function init() {
-  for (let employee of employees) {
+
+  let data;
+  if (window.location.href.includes(dontStr)) {
+    const numbers = JSON.parse(localStorage.getItem("nums"));
+    data = [];
+    for (let num of numbers) {
+      data.push(objFromLocal(num));
+    }
+  } else {
+    localStorage.clear();
+    data = employees;
+  }
+  const nums = [];
+  for (let employee of data) {
     addRow(employee);
     objToLocal(employee);
-    const op = document.createElement("option");
-    op.value = employee.num;
-    op.textContent = employee.num;
-    numDropDown.appendChild(op);
+    nums.push(employee.num);
   }
+  localStorage.setItem("nums",JSON.stringify(nums));
+  addEmpty();
 }
 
-// store an object in localStorage
+// store obj in localStorage
 function objToLocal(obj) {
   const s = JSON.stringify(obj);
   localStorage.setItem(obj.num,s);
@@ -32,46 +43,43 @@ function objFromLocal(i) {
   return obj;
 }
 
-//alter obj selected in html
-function alterObj() {
-  const i = document.getElementById("num").value;
-  const key = document.getElementById("key").value;
-  const val = document.getElementById("val").value;
-  const obj = objFromLocal(i);
-  obj[key] = val;
-  objToLocal(obj);
-  const cell = document.getElementById(key+i);
-  cell.textContent = val;
-}
-
-//adds a row with each of
-//obj's properties to the table
+/* 
+*  adds a row with a link 
+*  to other page with
+*  name of each obj
+*/
 function addRow(obj) {
   const row = document.createElement("tr");
   row.id = obj.num;
-  for (key in obj) {
-    const cell = document.createElement("td");
-    cell.id = key+obj.num;
-    cell.textContent = obj[key];
-    row.appendChild(cell);
-  }
+  const key = "name";
+  const cell = document.createElement("td");
+  cell.id = key+obj.num;
+  const link = document.createElement("a")
+  link.href = "otherPage.html?id=" + obj.num;
+  link.textContent = obj[key];
+  cell.appendChild(link);
+  row.appendChild(cell);
   table.appendChild(row);
 }
 
-//deletes an object from the table
-
-//should it have this feature?
-//should it have an addNewRow
-//feature as well?
-
-/*
-if deleteRow is added
-then the indices (num property)
-need to be adjusted for all employees
-in both localStorage and the table
-*/
-function deleteRow() {
-
+function newEmployee(email,name,age,department) {
+  const nums = JSON.parse(localStorage.getItem("nums"));
+  nums.push(nums[nums.length-1]+1);
+  localStorage.setItem("nums",JSON.stringify(nums));
+  return {
+    num: nums[nums.length-1],
+    email: email,
+    name: name,
+    age: age,
+    department: department
+  };
 }
+
+function addEmpty() {
+  const employee = newEmployee("","Make a new employee","","");
+  addRow(employee);
+  objToLocal(employee);
+}
+
 
 

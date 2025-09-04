@@ -6,3 +6,8 @@ body {
 table {
   margin: 0 auto;
 }
+
+
+#myDiv{
+  display: none;
+}
